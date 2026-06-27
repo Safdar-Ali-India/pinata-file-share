@@ -1,17 +1,18 @@
 import { createClient, type Client } from '@libsql/client';
 import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
 import * as schema from '@/lib/db/schema';
+import { getEnv } from '@/lib/env';
 
 let client: Client | null = null;
 let db: LibSQLDatabase<typeof schema> | null = null;
 
 function getDatabaseConfig(): { url: string; authToken?: string } {
-  const url = process.env.DATABASE_URL;
+  const url = getEnv('DATABASE_URL');
   if (!url) {
     throw new Error('DATABASE_URL is not configured');
   }
 
-  const authToken = process.env.DATABASE_AUTH_TOKEN;
+  const authToken = getEnv('DATABASE_AUTH_TOKEN');
   return authToken ? { url, authToken } : { url };
 }
 
