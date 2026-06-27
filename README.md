@@ -9,7 +9,7 @@ Temporary file sharing built with **Next.js**, **Pinata IPFS**, and **SQLite**. 
 - Shareable links with opaque tokens
 - MIME type and size validation
 - Per-IP upload rate limiting
-- Hourly cron cleanup for expired records
+- Daily cron cleanup for expired records
 - Security headers (XSS, clickjacking, MIME sniffing)
 - TypeScript strict mode, Drizzle ORM, Vitest tests
 
