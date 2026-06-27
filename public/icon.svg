@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="DropLink">
+  <rect width="32" height="32" rx="8" fill="#7c3aed"/>
+  <path
+    d="M16 22V10M16 10l-4.5 4.5M16 10l4.5 4.5"
+    stroke="#ffffff"
+    stroke-width="2.75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -5,17 +5,19 @@ import * as schema from '@/lib/db/schema';
 let client: Client | null = null;
 let db: LibSQLDatabase<typeof schema> | null = null;
 
-function getDatabaseUrl(): string {
+function getDatabaseConfig(): { url: string; authToken?: string } {
   const url = process.env.DATABASE_URL;
   if (!url) {
     throw new Error('DATABASE_URL is not configured');
   }
-  return url;
+
+  const authToken = process.env.DATABASE_AUTH_TOKEN;
+  return authToken ? { url, authToken } : { url };
 }
 
 export function getDb(): LibSQLDatabase<typeof schema> {
   if (!db) {
-    client = createClient({ url: getDatabaseUrl() });
+    client = createClient(getDatabaseConfig());
     db = drizzle(client, { schema });
   }
   return db;

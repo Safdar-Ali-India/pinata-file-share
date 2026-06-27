@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { EXPIRATION_PRESETS } from '@/lib/constants';
 import { ExpirationPicker } from '@/components/ExpirationPicker';
 import { SharePanel } from '@/components/SharePanel';
@@ -13,13 +13,25 @@ export function UploadForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<UploadSuccessResponse | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  const pickFile = useCallback((next: File | null) => {
+    setFile(next);
+    setError(null);
+  }, []);
+
+  const resetUpload = () => {
+    setResult(null);
+    setFile(null);
+    setError(null);
+  };
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
 
     if (!file) {
-      setError('Choose a file to upload');
+      setError('Please select a file to upload.');
       return;
     }
 
@@ -39,30 +51,73 @@ export function UploadForm() {
 
       if (!response.ok) {
         const err = data as ApiErrorResponse;
-        throw new Error(err.error ?? 'Upload failed');
+        throw new Error(err.error ?? 'Upload failed. Please try again.');
       }
 
       setResult(data as UploadSuccessResponse);
       setFile(null);
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : 'Upload failed');
+      setError(uploadError instanceof Error ? uploadError.message : 'Upload failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const onDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragActive(true);
+  };
+
+  const onDragLeave = () => setDragActive(false);
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragActive(false);
+    const dropped = event.dataTransfer.files?.[0];
+    if (dropped) pickFile(dropped);
+  };
+
+  if (result) {
+    return (
+      <div className="content-stage fade-in">
+        <SharePanel result={result} onReset={resetUpload} />
+      </div>
+    );
+  }
+
   return (
-    <div className="stack">
+    <div className="content-stage">
       <form className="card stack" onSubmit={onSubmit}>
-        <div className="stack">
-          <label htmlFor="file">Select file</label>
+        <div
+          className={`dropzone ${dragActive ? 'dropzone-active' : ''} ${file ? 'dropzone-has-file' : ''}`}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+        >
           <input
             id="file"
             name="file"
             type="file"
             disabled={loading}
-            onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            onChange={(event) => pickFile(event.target.files?.[0] ?? null)}
           />
+          {file ? (
+            <>
+              <span className="dropzone-icon" aria-hidden>
+                ✓
+              </span>
+              <span className="dropzone-file">{file.name}</span>
+              <span className="dropzone-hint">Click to choose a different file</span>
+            </>
+          ) : (
+            <>
+              <span className="dropzone-icon" aria-hidden>
+                ↑
+              </span>
+              <span className="dropzone-title">Drop a file here or browse</span>
+              <span className="dropzone-hint">Images, PDFs, documents, and archives up to 50MB</span>
+            </>
+          )}
         </div>
 
         <ExpirationPicker value={expirationHours} onChange={setExpirationHours} disabled={loading} />
@@ -73,12 +128,17 @@ export function UploadForm() {
           </div>
         )}
 
-        <button type="submit" disabled={loading || !file}>
-          {loading ? 'Uploading…' : 'Upload & get share link'}
+        <button type="submit" className="btn-primary" disabled={loading || !file}>
+          {loading ? (
+            <>
+              <span className="spinner" aria-hidden />
+              Uploading…
+            </>
+          ) : (
+            'Upload and get link'
+          )}
         </button>
       </form>
-
-      {result && <SharePanel result={result} />}
     </div>
   );
 }

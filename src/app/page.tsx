@@ -1,14 +1,21 @@
+import { AppShell } from '@/components/AppShell';
 import { UploadForm } from '@/components/UploadForm';
+import { BRAND } from '@/lib/constants';
 
 export default function HomePage() {
   return (
-    <main>
-      <h1>Pinata File Share</h1>
-      <p className="subtitle">
-        Upload files to IPFS via Pinata. Set an expiration — files auto-delete when the link expires.
-      </p>
+    <AppShell>
+      <header className="hero">
+        <h1>{BRAND.name}</h1>
+        <p className="subtitle hidden sm:block">{BRAND.tagline}</p>
+        <div className="feature-pills">
+          <span className="feature-pill">No account needed</span>
+          <span className="feature-pill">Auto-expires</span>
+          <span className="feature-pill">Up to 50MB</span>
+        </div>
+      </header>
+
       <UploadForm />
-      <footer>Files are stored on Pinata IPFS. Links stop working after expiration.</footer>
-    </main>
+    </AppShell>
   );
 }

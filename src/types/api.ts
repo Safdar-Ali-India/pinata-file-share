@@ -1,6 +1,7 @@
 export interface UploadSuccessResponse {
   shareToken: string;
   shareUrl: string;
+  ipfsUrl: string;
   fileName: string;
   mimeType: string;
   sizeBytes: number;

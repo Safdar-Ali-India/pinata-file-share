@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { createFileRecord } from '@/lib/db/repository';
 import { computeExpiresAt } from '@/lib/expiration';
 import { uploadFileToPinata } from '@/lib/pinata/service';
-import { sanitizeFileName } from '@/lib/security/sanitize';
+import { sanitizeFileName, buildGatewayUrl } from '@/lib/security/sanitize';
 import { checkRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import { parseExpirationHours, validateUploadFile } from '@/lib/validation/upload';
-import { toErrorResponse } from '@/lib/errors';
+import { AppError, toErrorResponse } from '@/lib/errors';
 import type { UploadSuccessResponse } from '@/types/api';
 
 export const runtime = 'nodejs';
@@ -38,9 +38,16 @@ export async function POST(request: Request) {
     });
 
     const appUrl = getAppUrl(request);
+    const gateway = process.env.PINATA_GATEWAY;
+    if (!gateway) {
+      throw new AppError('Gateway is not configured', 500, 'CONFIG_ERROR');
+    }
+
+    const ipfsUrl = buildGatewayUrl(gateway, record.pinataCid);
     const body: UploadSuccessResponse = {
       shareToken: record.shareToken,
       shareUrl: `${appUrl}/share/${record.shareToken}`,
+      ipfsUrl,
       fileName: record.fileName,
       mimeType: record.mimeType,
       sizeBytes: record.sizeBytes,

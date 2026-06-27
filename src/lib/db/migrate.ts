@@ -2,8 +2,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createClient } from '@libsql/client';
 
-async function migrate() {
+function getDatabaseConfig(): { url: string; authToken?: string } {
   const url = process.env.DATABASE_URL ?? 'file:./data/app.db';
+  const authToken = process.env.DATABASE_AUTH_TOKEN;
+  return authToken ? { url, authToken } : { url };
+}
+
+async function migrate() {
+  const { url } = getDatabaseConfig();
 
   if (url.startsWith('file:')) {
     const filePath = url.replace('file:', '');
@@ -13,7 +19,7 @@ async function migrate() {
     }
   }
 
-  const client = createClient({ url });
+  const client = createClient(getDatabaseConfig());
 
   await client.execute(`
     CREATE TABLE IF NOT EXISTS shared_files (

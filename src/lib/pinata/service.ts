@@ -42,6 +42,10 @@ interface PinataUploadApiResponse {
   error?: string;
 }
 
+function toPinataExpiresAt(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toISOString();
+}
+
 export async function uploadFileToPinata(
   file: File,
   fileName: string,
@@ -53,7 +57,7 @@ export async function uploadFileToPinata(
   formData.append('file', file, fileName);
   formData.append('network', 'public');
   formData.append('name', fileName);
-  formData.append('expires_at', String(expiresAtUnix));
+  formData.append('expires_at', toPinataExpiresAt(expiresAtUnix));
 
   try {
     const response = await fetch(PINATA_UPLOAD_URL, {

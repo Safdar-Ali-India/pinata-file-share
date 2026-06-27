@@ -1,3 +1,9 @@
+export const BRAND = {
+  name: 'DropLink',
+  tagline: 'Temporary file sharing with links that expire automatically.',
+  author: 'Safdar Ali',
+} as const;
+
 export const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 52_428_800);
 
 export const ALLOWED_MIME_TYPES = new Set([

@@ -11,19 +11,20 @@ interface ExpirationPickerProps {
 export function ExpirationPicker({ value, onChange, disabled }: ExpirationPickerProps) {
   return (
     <div className="stack">
-      <label htmlFor="expiration">Link expires after</label>
-      <select
-        id="expiration"
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(Number(event.target.value))}
-      >
+      <span className="field-label">Expires in</span>
+      <div className="preset-grid" role="group" aria-label="Expiration time">
         {EXPIRATION_PRESETS.map((preset) => (
-          <option key={preset.hours} value={preset.hours}>
+          <button
+            key={preset.hours}
+            type="button"
+            disabled={disabled}
+            className={`preset-btn ${value === preset.hours ? 'preset-btn-active' : ''}`}
+            onClick={() => onChange(preset.hours)}
+          >
             {preset.label}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   );
 }

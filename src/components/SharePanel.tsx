@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import type { UploadSuccessResponse } from '@/types/api';
 
 interface SharePanelProps {
   result: UploadSuccessResponse;
+  onReset: () => void;
 }
 
 function formatBytes(bytes: number): string {
@@ -13,43 +15,77 @@ function formatBytes(bytes: number): string {
 }
 
 function formatDate(unix: number): string {
-  return new Date(unix * 1000).toLocaleString();
+  return new Date(unix * 1000).toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
 }
 
-export function SharePanel({ result }: SharePanelProps) {
+function isImage(mimeType: string): boolean {
+  return mimeType.startsWith('image/');
+}
+
+export function SharePanel({ result, onReset }: SharePanelProps) {
+  const [copied, setCopied] = useState(false);
+
   const copyLink = async () => {
-    await navigator.clipboard.writeText(result.shareUrl);
+    await navigator.clipboard.writeText(result.ipfsUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="card stack" aria-live="polite">
-      <div className="alert alert-success">File uploaded. Share the link below before it expires.</div>
-
-      <div className="meta-grid">
-        <div className="meta-row">
-          <span>File</span>
-          <span>{result.fileName}</span>
+    <>
+      <div className="card card-success stack" aria-live="polite">
+        <div className="panel-header">
+          <h2 className="panel-title">Your link is ready</h2>
         </div>
-        <div className="meta-row">
-          <span>Size</span>
-          <span>{formatBytes(result.sizeBytes)}</span>
-        </div>
-        <div className="meta-row">
-          <span>Expires</span>
-          <span>{formatDate(result.expiresAt)}</span>
-        </div>
-      </div>
 
-      <div className="share-link">{result.shareUrl}</div>
+        <div className="alert alert-success">Copy the link below and share it before it expires.</div>
 
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-        <button type="button" onClick={copyLink}>
-          Copy link
+        {isImage(result.mimeType) && (
+          <div className="preview-wrap">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={result.ipfsUrl} alt={result.fileName} className="preview-image" />
+          </div>
+        )}
+
+        <div className="link-block">
+          <span className="field-label">Share link</span>
+          <div className="share-link">{result.ipfsUrl}</div>
+          <div className="action-row">
+            <button type="button" className="btn-primary" onClick={copyLink}>
+              {copied ? 'Copied' : 'Copy link'}
+            </button>
+            <a href={result.ipfsUrl} target="_blank" rel="noopener noreferrer" className="btn-link">
+              Open link
+            </a>
+          </div>
+        </div>
+
+        <div className="meta-grid">
+          <div className="meta-row">
+            <span>File</span>
+            <span>{result.fileName}</span>
+          </div>
+          <div className="meta-row">
+            <span>Size</span>
+            <span>{formatBytes(result.sizeBytes)}</span>
+          </div>
+          <div className="meta-row">
+            <span>Expires</span>
+            <span>{formatDate(result.expiresAt)}</span>
+          </div>
+        </div>
+
+        <button type="button" className="btn-ghost" onClick={onReset}>
+          Upload another file
         </button>
-        <a href={result.shareUrl} style={{ alignSelf: 'center' }}>
-          Open share page
-        </a>
       </div>
-    </div>
+
+      <div className={`toast ${copied ? 'toast-visible' : ''}`} role="status" aria-live="polite">
+        Link copied to clipboard
+      </div>
+    </>
   );
 }
