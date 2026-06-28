@@ -1,8 +1,14 @@
 import { AppShell } from '@/components/AppShell';
+import { BlogSpotlight } from '@/components/blog/BlogSpotlight';
 import { UploadForm } from '@/components/UploadForm';
 import { BRAND } from '@/lib/constants';
+import { getSpotlightPosts } from '@data/blog-posts';
+
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
+  const spotlightPosts = getSpotlightPosts();
+
   return (
     <AppShell>
       <header className="hero">
@@ -16,6 +22,7 @@ export default function HomePage() {
       </header>
 
       <UploadForm />
+      <BlogSpotlight posts={spotlightPosts} />
     </AppShell>
   );
 }

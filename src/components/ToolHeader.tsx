@@ -16,6 +16,12 @@ export function ToolHeader() {
         </Link>
 
         <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/blog"
+            className="hidden rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition-colors hover:border-violet-200 hover:text-violet-700 sm:inline-flex sm:text-sm"
+          >
+            Blog
+          </Link>
           <a
             href={EXTERNAL_LINKS.coffee}
             target="_blank"
