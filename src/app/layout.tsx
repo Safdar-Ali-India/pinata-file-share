@@ -12,6 +12,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'DropLink — Temporary file sharing',
   description: BRAND.tagline,
+  verification: {
+    google: 'UsecGm5YaeLB4WqJdc4gOA9fnoXI9CJyNPdGFblzYN4',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
