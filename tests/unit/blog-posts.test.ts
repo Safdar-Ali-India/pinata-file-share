@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   blogPosts,
   getNativeBlogPosts,
+  getHomepageBlogPosts,
   getPostByHref,
   getPublishedPosts,
-  getSpotlightPosts,
   NATIVE_BLOG_SLUGS,
 } from '@data/blog-posts';
 import { blogArticleContent } from '@/content/blog';
@@ -35,14 +35,22 @@ describe('blog-posts accessors', () => {
     expect(post?.seoPublishedTime).toBeTruthy();
   });
 
-  it('returns spotlight with one native, one DEV, and one Medium post when published', () => {
+  it('returns only native posts from getPublishedPosts', () => {
     const now = new Date('2026-06-25T12:00:00+05:30');
-    const spotlight = getSpotlightPosts(now);
+    const published = getPublishedPosts(now);
 
-    expect(spotlight).toHaveLength(3);
-    expect(spotlight.some((post) => post.native)).toBe(true);
-    expect(spotlight.some((post) => post.platform === 'dev')).toBe(true);
-    expect(spotlight.some((post) => post.platform === 'medium')).toBe(true);
+    expect(published.length).toBeGreaterThan(0);
+    expect(published.every((post) => post.native === true)).toBe(true);
+    expect(published.every((post) => post.href.startsWith('/blog/'))).toBe(true);
+  });
+
+  it('returns at most three posts for the homepage', () => {
+    const now = new Date('2026-06-25T12:00:00+05:30');
+    const homepage = getHomepageBlogPosts(3, now);
+    const published = getPublishedPosts(now);
+
+    expect(homepage).toHaveLength(3);
+    expect(homepage).toEqual(published.slice(0, 3));
   });
 
   it('matches every native slug to article content', () => {

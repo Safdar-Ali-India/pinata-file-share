@@ -14,8 +14,9 @@
 .env
 .env*.local
 
-# database
-/data/
+# database (keep data/blog-posts.ts tracked for the blog)
+/data/*.db
+/data/app.db
 
 # testing
 /coverage

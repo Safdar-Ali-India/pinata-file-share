@@ -2,15 +2,15 @@ import { AppShell } from '@/components/AppShell';
 import { BlogSpotlight } from '@/components/blog/BlogSpotlight';
 import { UploadForm } from '@/components/UploadForm';
 import { BRAND } from '@/lib/constants';
-import { getSpotlightPosts } from '@data/blog-posts';
+import { getHomepageBlogPosts } from '@data/blog-posts';
 
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const spotlightPosts = getSpotlightPosts();
+  const blogPosts = getHomepageBlogPosts(3);
 
   return (
-    <AppShell>
+    <AppShell mainClassName="tool-main mx-auto max-w-4xl px-4 py-8 sm:py-10">
       <header className="hero">
         <h1>{BRAND.name}</h1>
         <p className="subtitle hidden sm:block">{BRAND.tagline}</p>
@@ -22,7 +22,7 @@ export default function HomePage() {
       </header>
 
       <UploadForm />
-      <BlogSpotlight posts={spotlightPosts} />
+      <BlogSpotlight posts={blogPosts} />
     </AppShell>
   );
 }

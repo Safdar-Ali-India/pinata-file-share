@@ -14,14 +14,6 @@ export function PublishedBlogLink({ href, className, children }: PublishedBlogLi
     return <span className={className}>{children}</span>;
   }
 
-  if (state.kind === 'external') {
-    return (
-      <a href={state.href} className={className} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    );
-  }
-
   return (
     <Link href={state.href} className={className}>
       {children}

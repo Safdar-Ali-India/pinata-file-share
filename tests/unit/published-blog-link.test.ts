@@ -18,11 +18,8 @@ describe('PublishedBlogLink state', () => {
     });
   });
 
-  it('returns external link for published DEV/Medium posts', () => {
-    const state = getPublishedBlogLinkState(
-      'https://dev.to/safdarali/build-expiring-file-sharing-with-nextjs-and-pinata',
-      new Date('2026-06-20T12:00:00+05:30')
-    );
-    expect(state.kind).toBe('external');
+  it('returns unpublished for unknown href', () => {
+    const state = getPublishedBlogLinkState('/blog/does-not-exist');
+    expect(state).toEqual({ kind: 'unpublished' });
   });
 });

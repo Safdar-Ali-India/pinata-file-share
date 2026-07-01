@@ -23,8 +23,6 @@ const SKIP_HREFS = new Set([
   '/blog/temporary-file-sharing-without-an-account',
   '/blog/secure-expiring-file-links-droplink',
   '/blog/how-droplink-uses-pinata-ipfs-turso',
-  'https://dev.to/safdarali/build-expiring-file-sharing-with-nextjs-and-pinata',
-  'https://medium.com/@safdarali/why-temporary-file-links-are-the-future-of-safe-sharing',
 ]);
 
 const IST = '+05:30';
